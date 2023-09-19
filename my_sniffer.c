@@ -5,8 +5,8 @@
 #include <arpa/inet.h>
 #include "myheader.h"
 
-#define MAC_STR_SIZE 17
-#define IP_STR_SIZE 15
+#define MAC_STR_SIZE 18
+#define IP_STR_SIZE 16
 #define MESSAGE_BUFF_SIZE 1024
 
 /**
@@ -17,27 +17,28 @@
  * addr: MAC주소가 저장된 바이트 배열
 */
 void eth_mtoa(char* target, u_char addr[]) {
-    char mac_addr[MAC_STR_SIZE+1];
-    snprintf(mac_addr, MAC_STR_SIZE+1, "%02x:%02x:%02x:%02x:%02x:%02x", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
+    char mac_addr[MAC_STR_SIZE];
+    snprintf(mac_addr, MAC_STR_SIZE, "%02x:%02x:%02x:%02x:%02x:%02x", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
     strncpy(target, mac_addr, MAC_STR_SIZE);
 }
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header,
                               const u_char *packet)
 {
+    // 분석할 정보들...
     const char buffer[MESSAGE_BUFF_SIZE]; // 응용 계층으로 전달되고자한 데이터
-    char eth_src[MAC_STR_SIZE+1]; // Ethernet Source Address
-    char eth_dst[MAC_STR_SIZE+1]; // Ethernet Destination Address
-    char ip_src[IP_STR_SIZE+1]; // IP Source Address
-    char ip_dst[IP_STR_SIZE+1]; // IP Destination Address
+    char eth_src[MAC_STR_SIZE]; // Ethernet Source Address
+    char eth_dst[MAC_STR_SIZE]; // Ethernet Destination Address
+    char ip_src[IP_STR_SIZE]; // IP Source Address
+    char ip_dst[IP_STR_SIZE]; // IP Destination Address
     u_short tcp_src; // Source Port
     u_short tcp_dst; // Destination Port
 
     memset((char*)buffer, 0, MESSAGE_BUFF_SIZE);
-    memset((char*)eth_src, 0, MAC_STR_SIZE+1);
-    memset((char*)eth_dst, 0, MAC_STR_SIZE+1);
-    memset((char*)ip_src, 0, IP_STR_SIZE+1);
-    memset((char*)ip_dst, 0, IP_STR_SIZE+1);
+    memset((char*)eth_src, 0, MAC_STR_SIZE);
+    memset((char*)eth_dst, 0, MAC_STR_SIZE);
+    memset((char*)ip_src, 0, IP_STR_SIZE);
+    memset((char*)ip_dst, 0, IP_STR_SIZE);
 
     // [1] Extract Ethernet Address
     struct ethheader *eth = (struct ethheader *)packet;
